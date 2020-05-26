@@ -4,6 +4,20 @@ ncnn implementation of Real-World Super-Resolution via Kernel Estimation and Noi
 
 realsr-ncnn-vulkan uses [ncnn project](https://github.com/Tencent/ncnn) as the universal neural network inference framework.
 
+## About RealSR
+
+Real-World Super-Resolution via Kernel Estimation and Noise Injection (CVPRW 2020)
+
+https://github.com/jixiaozhong/RealSR
+
+Xiaozhong Ji, Yun Cao, Ying Tai, Chengjie Wang, Jilin Li, and Feiyue Huang
+
+*Tencent YouTu Lab*
+
+Our solution is the **winner of CVPR NTIRE 2020 Challenge on Real-World Super-Resolution** in both tracks.
+
+https://arxiv.org/abs/2005.01996
+
 ## Usages
 
 ### Example Command
