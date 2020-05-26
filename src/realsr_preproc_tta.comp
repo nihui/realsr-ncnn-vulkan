@@ -67,8 +67,10 @@ void main()
     int x = gx + p.crop_x - p.pad_left;
     int y = gy + p.crop_y - p.pad_top;
 
-    x = clamp(x, 0, p.w - 1);
-    y = clamp(y, 0, p.h - 1);
+    x = abs(x);
+    y = abs(y);
+    x = (p.w - 1) - abs(x - (p.w - 1));
+    y = (p.h - 1) - abs(y - (p.h - 1));
 
 #if NCNN_int8_storage
     int v_offset = y * p.w + x;
