@@ -73,7 +73,7 @@ static void print_usage()
     fprintf(stderr, "  -o output-path       output image path (png) or directory\n");
     fprintf(stderr, "  -s scale             upscale ratio (4, default=4)\n");
     fprintf(stderr, "  -t tile-size         tile size (>=32/0=auto, default=0)\n");
-    fprintf(stderr, "  -m model-path        realsr model path (default=models-cunet)\n");
+    fprintf(stderr, "  -m model-path        realsr model path (default=models-DF2K_JPEG)\n");
     fprintf(stderr, "  -g gpu-id            gpu device to use (default=0)\n");
     fprintf(stderr, "  -j load:proc:save    thread count for load/proc/save (default=1:2:2)\n");
     fprintf(stderr, "  -x                   enable tta mode\n");
@@ -458,7 +458,8 @@ int main(int argc, char** argv)
 
     int prepadding = 0;
 
-    if (model.find(PATHSTR("models-DF2K")) != path_t::npos)
+    if (model.find(PATHSTR("models-DF2K")) != path_t::npos
+        || model.find(PATHSTR("models-DF2K_JPEG")) != path_t::npos)
     {
         prepadding = 10;
     }
