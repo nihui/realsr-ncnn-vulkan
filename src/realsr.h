@@ -34,7 +34,7 @@ private:
     ncnn::Net net;
     ncnn::Pipeline* realsr_preproc;
     ncnn::Pipeline* realsr_postproc;
-    ncnn::Layer* bicubic_2x;
+    ncnn::Layer* bicubic_4x;
     bool tta_mode;
 };
 

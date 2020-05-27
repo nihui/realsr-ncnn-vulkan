@@ -56,7 +56,7 @@ RealSR::RealSR(int gpuid, bool _tta_mode)
 
     realsr_preproc = 0;
     realsr_postproc = 0;
-    bicubic_2x = 0;
+    bicubic_4x = 0;
     tta_mode = _tta_mode;
 }
 
@@ -68,8 +68,8 @@ RealSR::~RealSR()
         delete realsr_postproc;
     }
 
-    bicubic_2x->destroy_pipeline(net.opt);
-    delete bicubic_2x;
+    bicubic_4x->destroy_pipeline(net.opt);
+    delete bicubic_4x;
 }
 
 #if _WIN32
@@ -155,18 +155,18 @@ int RealSR::load(const std::string& parampath, const std::string& modelpath)
         }
     }
 
-    // bicubic 2x for alpha channel
+    // bicubic 4x for alpha channel
     {
-        bicubic_2x = ncnn::create_layer("Interp");
-        bicubic_2x->vkdev = net.vulkan_device();
+        bicubic_4x = ncnn::create_layer("Interp");
+        bicubic_4x->vkdev = net.vulkan_device();
 
         ncnn::ParamDict pd;
         pd.set(0, 3);// bicubic
-        pd.set(1, 2.f);
-        pd.set(2, 2.f);
-        bicubic_2x->load_param(pd);
+        pd.set(1, 4.f);
+        pd.set(2, 4.f);
+        bicubic_4x->load_param(pd);
 
-        bicubic_2x->create_pipeline(net.opt);
+        bicubic_4x->create_pipeline(net.opt);
     }
 
     return 0;
@@ -267,10 +267,10 @@ int RealSR::process(const ncnn::Mat& inimage, ncnn::Mat& outimage) const
                 ncnn::VkMat in_alpha_tile_gpu;
                 {
                     // crop tile
-                    int tile_x0 = xi * TILE_SIZE_X;
-                    int tile_x1 = std::min((xi + 1) * TILE_SIZE_X, w) + prepadding + prepadding;
-                    int tile_y0 = yi * TILE_SIZE_Y;
-                    int tile_y1 = std::min((yi + 1) * TILE_SIZE_Y, h) + prepadding + prepadding;
+                    int tile_x0 = xi * TILE_SIZE_X - prepadding;
+                    int tile_x1 = std::min((xi + 1) * TILE_SIZE_X, w) + prepadding;
+                    int tile_y0 = yi * TILE_SIZE_Y - prepadding;
+                    int tile_y1 = std::min((yi + 1) * TILE_SIZE_Y, h) + prepadding;
 
                     in_tile_gpu[0].create(tile_x1 - tile_x0, tile_y1 - tile_y0, 3, in_out_tile_elemsize, 1, blob_vkallocator);
                     in_tile_gpu[1].create(tile_x1 - tile_x0, tile_y1 - tile_y0, 3, in_out_tile_elemsize, 1, blob_vkallocator);
@@ -343,9 +343,9 @@ int RealSR::process(const ncnn::Mat& inimage, ncnn::Mat& outimage) const
                     {
                         out_alpha_tile_gpu = in_alpha_tile_gpu;
                     }
-                    if (scale == 2)
+                    if (scale == 4)
                     {
-                        bicubic_2x->forward(in_alpha_tile_gpu, out_alpha_tile_gpu, cmd, opt);
+                        bicubic_4x->forward(in_alpha_tile_gpu, out_alpha_tile_gpu, cmd, opt);
                     }
                 }
 
@@ -393,10 +393,10 @@ int RealSR::process(const ncnn::Mat& inimage, ncnn::Mat& outimage) const
                 ncnn::VkMat in_alpha_tile_gpu;
                 {
                     // crop tile
-                    int tile_x0 = xi * TILE_SIZE_X;
-                    int tile_x1 = std::min((xi + 1) * TILE_SIZE_X, w) + prepadding + prepadding;
-                    int tile_y0 = yi * TILE_SIZE_Y;
-                    int tile_y1 = std::min((yi + 1) * TILE_SIZE_Y, h) + prepadding + prepadding;
+                    int tile_x0 = xi * TILE_SIZE_X - prepadding;
+                    int tile_x1 = std::min((xi + 1) * TILE_SIZE_X, w) + prepadding;
+                    int tile_y0 = yi * TILE_SIZE_Y - prepadding;
+                    int tile_y1 = std::min((yi + 1) * TILE_SIZE_Y, h) + prepadding;
 
                     in_tile_gpu.create(tile_x1 - tile_x0, tile_y1 - tile_y0, 3, in_out_tile_elemsize, 1, blob_vkallocator);
 
@@ -454,9 +454,9 @@ int RealSR::process(const ncnn::Mat& inimage, ncnn::Mat& outimage) const
                     {
                         out_alpha_tile_gpu = in_alpha_tile_gpu;
                     }
-                    if (scale == 2)
+                    if (scale == 4)
                     {
-                        bicubic_2x->forward(in_alpha_tile_gpu, out_alpha_tile_gpu, cmd, opt);
+                        bicubic_4x->forward(in_alpha_tile_gpu, out_alpha_tile_gpu, cmd, opt);
                     }
                 }
 
