@@ -45,7 +45,7 @@ Usage: realsr-ncnn-vulkan -i infile -o outfile [options]...
 
 - `input-path` and `output-path` accept either file path or directory path
 - `scale` = scale level, 4=upscale 4x
-- `tile-size` = tile size, use smaller value to reduce GPU memory usage, default is 400
+- `tile-size` = tile size, use smaller value to reduce GPU memory usage, default is auto
 - `load:proc:save` = thread count for the three stages (image decoding + realsr upscaling + image encoding), use larger value may increase GPU utility and consume more GPU memory. You can tune this configuration as "4:4:4" for many small-size images, and "2:2:2" for large-size images. The default setting usually works fine for most situations. If you find that your GPU is hungry, do increase thread count to achieve faster processing.
 
 If you encounter crash or error, try to upgrade your GPU driver
@@ -53,6 +53,38 @@ If you encounter crash or error, try to upgrade your GPU driver
 - Intel: https://downloadcenter.intel.com/product/80939/Graphics-Drivers
 - AMD: https://www.amd.com/en/support
 - NVIDIA: https://www.nvidia.com/Download/index.aspx
+
+## Build from Source
+
+1. Download and setup the Vulkan SDK from https://vulkan.lunarg.com/
+  - For Linux distributions, you can either get the essential build requirements from package manager
+```shell
+dnf install vulkan-headers vulkan-loader-devel
+```
+```shell
+apt-get install libvulkan-dev
+```
+```shell
+pacman -S vulkan-headers vulkan-icd-loader
+```
+
+2. Clone this project with all submodules
+
+```shell
+git clone https://github.com/nihui/realsr-ncnn-vulkan.git
+cd realsr-ncnn-vulkan
+git submodule update --init --recursive
+```
+
+3. Build with CMake
+  - You can pass -DUSE_STATIC_MOLTENVK=ON option to avoid linking the vulkan loader library on MacOS
+
+```shell
+mkdir build
+cd build
+cmake ../src
+cmake --build . -j 4
+```
 
 ## Sample Images
 
