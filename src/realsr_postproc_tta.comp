@@ -102,7 +102,7 @@ void main()
 
     uint v32 = clamp(uint(floor(v)), 0, 255);
 
-    if (bgr == 1)
+    if (bgr == 1 && gz != 3)
         top_blob_data[v_offset * p.channels + 2 - gz] = uint8_t(v32);
     else
         top_blob_data[v_offset * p.channels + gz] = uint8_t(v32);
