@@ -334,6 +334,11 @@ int RealSR::process(const ncnn::Mat& inimage, ncnn::Mat& outimage) const
                     ex.input("data", in_tile_gpu[ti]);
 
                     ex.extract("output", out_tile_gpu[ti], cmd);
+
+                    {
+                        cmd.submit_and_wait();
+                        cmd.reset();
+                    }
                 }
 
                 ncnn::VkMat out_alpha_tile_gpu;

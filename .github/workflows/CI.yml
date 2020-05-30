@@ -1,0 +1,174 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  windows-2016:
+    runs-on: windows-2016
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
+    - name: cache-vulkansdk
+      id: cache-vulkansdk
+      uses: actions/cache@v1
+      with:
+        path: "VulkanSDK"
+        key: VulkanSDK-1.2.135.0-Installer-4
+    - name: vulkansdk
+      if: steps.cache-vulkansdk.outputs.cache-hit != 'true'
+      run: |
+        Invoke-WebRequest -Uri https://sdk.lunarg.com/sdk/download/1.2.135.0/windows/VulkanSDK-1.2.135.0-Installer.exe?Human=true -OutFile VulkanSDK-1.2.135.0-Installer.exe
+        7z x -aoa ./VulkanSDK-1.2.135.0-Installer.exe -oVulkanSDK
+        Remove-Item .\VulkanSDK\Demos, .\VulkanSDK\Samples, .\VulkanSDK\Third-Party, .\VulkanSDK\Tools, .\VulkanSDK\Tools32, .\VulkanSDK\Bin32, .\VulkanSDK\Lib32 -Recurse
+    - name: configure
+      run: |
+        $env:VULKAN_SDK="$(pwd)/VulkanSDK"
+        mkdir build; cd build
+        cmake -A x64 ../src
+    - name: build
+      run: cmake --build build --config Release -j 2
+    - name: deploy
+      run: |
+        mkdir realsr-ncnn-vulkan-artifact
+        Copy-Item -Verbose -Path "build\Release\realsr-ncnn-vulkan.exe" -Destination "realsr-ncnn-vulkan-artifact"
+        Copy-Item -Verbose -Recurse -Path "models\*" -Destination "realsr-ncnn-vulkan-artifact"
+    - uses: actions/upload-artifact@v2
+      with:
+        name: realsr-ncnn-vulkan-artifact-windows-2016
+        path: realsr-ncnn-vulkan-artifact
+
+  windows-2019:
+    runs-on: windows-2019
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
+    - name: cache-vulkansdk
+      id: cache-vulkansdk
+      uses: actions/cache@v1
+      with:
+        path: "VulkanSDK"
+        key: VulkanSDK-1.2.135.0-Installer-4
+    - name: vulkansdk
+      if: steps.cache-vulkansdk.outputs.cache-hit != 'true'
+      run: |
+        Invoke-WebRequest -Uri https://sdk.lunarg.com/sdk/download/1.2.135.0/windows/VulkanSDK-1.2.135.0-Installer.exe?Human=true -OutFile VulkanSDK-1.2.135.0-Installer.exe
+        7z x -aoa ./VulkanSDK-1.2.135.0-Installer.exe -oVulkanSDK
+        Remove-Item .\VulkanSDK\Demos, .\VulkanSDK\Samples, .\VulkanSDK\Third-Party, .\VulkanSDK\Tools, .\VulkanSDK\Tools32, .\VulkanSDK\Bin32, .\VulkanSDK\Lib32 -Recurse
+    - name: configure
+      run: |
+        $env:VULKAN_SDK="$(pwd)/VulkanSDK"
+        mkdir build; cd build
+        cmake -A x64 ../src
+    - name: build
+      run: cmake --build build --config Release -j 2
+    - name: deploy
+      run: |
+        mkdir realsr-ncnn-vulkan-artifact
+        Copy-Item -Verbose -Path "build\Release\realsr-ncnn-vulkan.exe" -Destination "realsr-ncnn-vulkan-artifact"
+        Copy-Item -Verbose -Recurse -Path "models\*" -Destination "realsr-ncnn-vulkan-artifact"
+    - uses: actions/upload-artifact@v2
+      with:
+        name: realsr-ncnn-vulkan-artifact-windows-2019
+        path: realsr-ncnn-vulkan-artifact
+
+  ubuntu-1604:
+    runs-on: ubuntu-16.04
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
+    - name: cache-vulkansdk
+      id: cache-vulkansdk
+      uses: actions/cache@v1
+      with:
+        path: "1.2.135.0"
+        key: vulkansdk-linux-x86_64-1.2.135.0
+    - name: vulkansdk
+      if: steps.cache-vulkansdk.outputs.cache-hit != 'true'
+      run: |
+        wget https://sdk.lunarg.com/sdk/download/1.2.135.0/linux/vulkansdk-linux-x86_64-1.2.135.0.tar.gz?Human=true -O vulkansdk-linux-x86_64-1.2.135.0.tar.gz
+        tar -xf vulkansdk-linux-x86_64-1.2.135.0.tar.gz
+        rm -rf 1.2.135.0/source 1.2.135.0/samples
+        find 1.2.135.0 -type f | grep -v -E 'vulkan|glslang' | xargs rm
+    - name: configure
+      run: export VULKAN_SDK=`pwd`/1.2.135.0/x86_64 && mkdir build && cd build && cmake ../src
+    - name: build
+      run: cmake --build build -j 2
+    - name: deploy
+      run: |
+        mkdir realsr-ncnn-vulkan-artifact
+        strip build/realsr-ncnn-vulkan
+        cp -v build/realsr-ncnn-vulkan realsr-ncnn-vulkan-artifact
+        cp -v -r models/* realsr-ncnn-vulkan-artifact
+    - uses: actions/upload-artifact@v2
+      with:
+        name: realsr-ncnn-vulkan-artifact-ubuntu-16.04
+        path: realsr-ncnn-vulkan-artifact
+
+  ubuntu-1804:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
+    - name: cache-vulkansdk
+      id: cache-vulkansdk
+      uses: actions/cache@v1
+      with:
+        path: "1.2.135.0"
+        key: vulkansdk-linux-x86_64-1.2.135.0
+    - name: vulkansdk
+      if: steps.cache-vulkansdk.outputs.cache-hit != 'true'
+      run: |
+        wget https://sdk.lunarg.com/sdk/download/1.2.135.0/linux/vulkansdk-linux-x86_64-1.2.135.0.tar.gz?Human=true -O vulkansdk-linux-x86_64-1.2.135.0.tar.gz
+        tar -xf vulkansdk-linux-x86_64-1.2.135.0.tar.gz
+        rm -rf 1.2.135.0/source 1.2.135.0/samples
+        find 1.2.135.0 -type f | grep -v -E 'vulkan|glslang' | xargs rm
+    - name: configure
+      run: export VULKAN_SDK=`pwd`/1.2.135.0/x86_64 && mkdir build && cd build && cmake ../src
+    - name: build
+      run: cmake --build build -j 2
+    - name: deploy
+      run: |
+        mkdir realsr-ncnn-vulkan-artifact
+        strip build/realsr-ncnn-vulkan
+        cp -v build/realsr-ncnn-vulkan realsr-ncnn-vulkan-artifact
+        cp -v -r models/* realsr-ncnn-vulkan-artifact
+    - uses: actions/upload-artifact@v2
+      with:
+        name: realsr-ncnn-vulkan-artifact-ubuntu-18.04
+        path: realsr-ncnn-vulkan-artifact
+
+  macos-1015:
+    runs-on: macos-10.15
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
+    - name: cache-vulkansdk
+      id: cache-vulkansdk
+      uses: actions/cache@v1
+      with:
+        path: "vulkansdk-macos-1.2.135.0"
+        key: vulkansdk-macos-1.2.135.0
+    - name: vulkansdk
+      if: steps.cache-vulkansdk.outputs.cache-hit != 'true'
+      run: |
+        wget https://sdk.lunarg.com/sdk/download/1.2.135.0/mac/vulkansdk-macos-1.2.135.0.tar.gz?Human=true -O vulkansdk-macos-1.2.135.0.tar.gz
+        tar -xf vulkansdk-macos-1.2.135.0.tar.gz
+        rm -rf vulkansdk-macos-1.2.135.0/Applications
+        find vulkansdk-macos-1.2.135.0 -type f | grep -v -E 'vulkan|glslang|MoltenVK' | xargs rm
+    - name: configure
+      run: export VULKAN_SDK=`pwd`/vulkansdk-macos-1.2.135.0/macOS && mkdir build && cd build && cmake -DUSE_STATIC_MOLTENVK=ON -DVulkan_LIBRARY=`pwd`/../vulkansdk-macos-1.2.135.0/MoltenVK/macOS/framework/MoltenVK.framework/MoltenVK ../src
+    - name: build
+      run: cmake --build build -j 2
+    - name: deploy
+      run: |
+        mkdir realsr-ncnn-vulkan-artifact
+        strip build/realsr-ncnn-vulkan
+        cp -v build/realsr-ncnn-vulkan realsr-ncnn-vulkan-artifact
+        cp -v -r models/* realsr-ncnn-vulkan-artifact
+    - uses: actions/upload-artifact@v2
+      with:
+        name: realsr-ncnn-vulkan-artifact-macos-10.15
+        path: realsr-ncnn-vulkan-artifact
