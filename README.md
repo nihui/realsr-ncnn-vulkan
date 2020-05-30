@@ -1,8 +1,18 @@
 # RealSR ncnn Vulkan
 
+![CI](https://github.com/nihui/realsr-ncnn-vulkan/workflows/CI/badge.svg)
+
 ncnn implementation of Real-World Super-Resolution via Kernel Estimation and Noise Injection super resolution.
 
 realsr-ncnn-vulkan uses [ncnn project](https://github.com/Tencent/ncnn) as the universal neural network inference framework.
+
+## [Download](https://github.com/nihui/realsr-ncnn-vulkan/releases)
+
+Download Windows/Linux/MacOS Executable for Intel/AMD/Nvidia GPU
+
+**https://github.com/nihui/realsr-ncnn-vulkan/releases**
+
+This package includes all the binaries and models required. It is portable, so no CUDA or Caffe runtime environment is needed :)
 
 ## About RealSR
 
