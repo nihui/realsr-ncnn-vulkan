@@ -33,7 +33,7 @@ Usage: realsr-ncnn-vulkan -i infile -o outfile [options]...
 
   -h                   show this help
   -v                   verbose output
-  -i input-path        input image path (jpg/png) or directory
+  -i input-path        input image path (jpg/png/webp) or directory
   -o output-path       output image path (png) or directory
   -s scale             upscale ratio (4, default=4)
   -t tile-size         tile size (>=32/0=auto, default=0)
@@ -125,3 +125,4 @@ realsr-ncnn-vulkan.exe -i origin.jpg -o output.png -s 4 -x -m models-DF2K
 - https://github.com/Tencent/ncnn for fast neural network inference on ALL PLATFORMS
 - https://github.com/nothings/stb for decoding and encoding image on Linux / MacOS
 - https://github.com/tronkko/dirent for listing files in directory on Windows
+- https://github.com/webmproject/libwebp for decoding Webp images on ALL PLATFORMS

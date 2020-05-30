@@ -1,6 +1,10 @@
+cmake_policy(SET CMP0091 NEW)
+set(CMAKE_POLICY_DEFAULT_CMP0091 NEW)
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
 project(realsr-ncnn-vulkan)
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.9)
 
 set(CMAKE_BUILD_TYPE Release)
 
@@ -68,7 +72,16 @@ if(OPENMP_FOUND)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
 
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+# enable global link time optimization
+cmake_policy(SET CMP0069 NEW)
+set(CMAKE_POLICY_DEFAULT_CMP0069 NEW)
+include(CheckIPOSupported)
+check_ipo_supported(RESULT ipo_supported OUTPUT ipo_supported_output)
+if(ipo_supported)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+else()
+    message(WARNING "IPO is not supported: ${ipo_supported_output}")
+endif()
 
 # build ncnn library
 if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/ncnn/CMakeLists.txt")
@@ -162,6 +175,29 @@ option(WITH_LAYER_statisticspooling "" OFF)
 
 add_subdirectory(ncnn)
 
+# build libwebp library
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/libwebp/CMakeLists.txt")
+    message(FATAL_ERROR "The submodules were not downloaded! Please update submodules with \"git submodule update --init --recursive\" and try again.")
+endif()
+
+option(WEBP_ENABLE_SIMD "" ON)
+option(WEBP_BUILD_ANIM_UTILS "" OFF)
+option(WEBP_BUILD_CWEBP "" OFF)
+option(WEBP_BUILD_DWEBP "" OFF)
+option(WEBP_BUILD_GIF2WEBP "" OFF)
+option(WEBP_BUILD_IMG2WEBP "" OFF)
+option(WEBP_BUILD_VWEBP "" OFF)
+option(WEBP_BUILD_WEBPINFO "" OFF)
+option(WEBP_BUILD_WEBPMUX "" OFF)
+option(WEBP_BUILD_EXTRAS "" OFF)
+option(WEBP_BUILD_WEBP_JS "" OFF)
+option(WEBP_NEAR_LOSSLESS "" OFF)
+option(WEBP_ENABLE_SWAP_16BIT_CSP "" OFF)
+
+add_subdirectory(libwebp)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libwebp/src)
+
 # look for vulkan compute shader and compile
 set(SHADER_SPV_HEX_FILES)
 
@@ -176,7 +212,7 @@ add_executable(realsr-ncnn-vulkan main.cpp realsr.cpp)
 
 add_dependencies(realsr-ncnn-vulkan generate-spirv)
 
-set(REALSR_LINK_LIBRARIES ncnn ${Vulkan_LIBRARY})
+set(REALSR_LINK_LIBRARIES ncnn webpdecoder ${Vulkan_LIBRARY})
 
 if(USE_STATIC_MOLTENVK)
     find_library(CoreFoundation NAMES CoreFoundation)
