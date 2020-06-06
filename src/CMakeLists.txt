@@ -172,6 +172,7 @@ option(WITH_LAYER_pixelshuffle "" ON)
 option(WITH_LAYER_deepcopy "" OFF)
 option(WITH_LAYER_mish "" OFF)
 option(WITH_LAYER_statisticspooling "" OFF)
+option(WITH_LAYER_swish "" OFF)
 
 add_subdirectory(ncnn)
 
@@ -212,7 +213,7 @@ add_executable(realsr-ncnn-vulkan main.cpp realsr.cpp)
 
 add_dependencies(realsr-ncnn-vulkan generate-spirv)
 
-set(REALSR_LINK_LIBRARIES ncnn webpdecoder ${Vulkan_LIBRARY})
+set(REALSR_LINK_LIBRARIES ncnn webp ${Vulkan_LIBRARY})
 
 if(USE_STATIC_MOLTENVK)
     find_library(CoreFoundation NAMES CoreFoundation)
