@@ -768,7 +768,7 @@ int main(int argc, char** argv)
         {
             realsr[i] = new RealSR(gpuid[i], tta_mode);
 
-            realsr[i]->load(parampath, modelpath);
+            realsr[i]->load(paramfullpath, modelfullpath);
 
             realsr[i]->scale = scale;
             realsr[i]->tilesize = tilesize[i];
