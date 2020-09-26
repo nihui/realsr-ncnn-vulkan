@@ -8,7 +8,7 @@
 - x=A(preproc) or Z(postproc) or B(middle-postproc) or Y(middle-preproc),
 - y=1(with tta) or 0(no tta),
 - z=b(fp32) or m(fp16, no int8) or s(fp16, with int8) or g(fp16in, int16out)
--      
+-        
 - 6 extra .comp shader variants are added to src/etc, compile them with glslangValidator from https://github.com/KhronosGroup/glslang/releases
 - command: glslangValidator -V -Os -o %1.spv %1
 - Feel free to merge them with #ifdef .etc (I can't)
