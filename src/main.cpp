@@ -522,7 +522,7 @@ void* proc(void* args)
 			break;
 
 
-		auto tup = _mid32to32_;
+		int tup = _mid32to32_;
 		if (v.stepinit == 1)
 		{
 			tup = _simp8to8_;
