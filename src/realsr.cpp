@@ -87,8 +87,8 @@ inline int FillNetPack(ncnnNetPack& pack,int model,  int scale, int noise)
 		fclose(fp);
 	}
 #else
-    net.load_param(parampath);
-    net.load_model(modelpath);
+    pack.net.load_param(parampath);
+    pack.net.load_model(modelpath);
 #endif
 
 
