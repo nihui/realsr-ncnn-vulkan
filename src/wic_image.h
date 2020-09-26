@@ -4,7 +4,37 @@
 // image decoder and encoder with WIC
 #include <wincodec.h>
 
-unsigned char* wic_decode_image(const wchar_t* filepath, int* w, int* h, int* c)
+extern "C" {
+#include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
+}
+/*
+void ffmpegreg()
+{
+    av_register_all();
+
+}
+
+
+unsigned char* wic_decode_imageXXX(const wchar_t* filepath, int* w, int* h, int* c)
+{
+    CreateSymbolicLinkW(filepath,L"q:\\vokoko.jpg",NULL);
+
+    AVFormatContext *pFormatCtx = avformat_alloc_context();
+
+    if(avformat_open_input(&pFormatCtx,"D:\\Program Files\\irfanview\\SR\\tibr_o.jpg",NULL,NULL)!=0){       //打開多媒體文件
+		puts("Couldn't open input stream.\n");
+		return NULL;
+	}
+
+	if(avformat_find_stream_info(pFormatCtx,NULL)<0){
+		printf("Couldn't find stream information.\n");
+		return NULL;
+	}
+}
+*/
+
+extern "C" __declspec(dllexport) unsigned char* wic_decode_image(const wchar_t* filepath, int* w, int* h, int* c)
 {
     IWICImagingFactory* factory = 0;
     IWICBitmapDecoder* decoder = 0;
@@ -176,7 +206,7 @@ int wic_encode_jpeg_image(const wchar_t* filepath, int w, int h, int c, void* bg
     int ret = 0;
 
     PROPBAG2 option = { 0 };
-    option.pstrName = L"ImageQuality";
+    option.pstrName = (LPOLESTR)L"ImageQuality";
     VARIANT varValue;
     VariantInit(&varValue);
     varValue.vt = VT_R4;
