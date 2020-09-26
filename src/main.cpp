@@ -656,8 +656,11 @@ void* save(void* args)
 
 std::vector<path_t> inout_files[2];
 
-
+#if _WIN32
 DLL_EXPORT void InOutList(const int count, wchar_t** in_paths, wchar_t** out_paths)
+#else
+DLL_EXPORT void InOutList(const int count, char** in_paths, char** out_paths)
+#endif
 {
 	
 
