@@ -417,7 +417,7 @@ static int FillPathList(const path_t inputpath, const path_t outputpath, const p
 			}
 			//puts("crahs?0");
 
-			auto otfi = outputpath + PATHSTR('/') + output_filename;
+			path_t otfi = outputpath + PATHSTR('/') + output_filename;
 			if (!FileExist(otfi + PATHSTR(".*")))
 			{
 
