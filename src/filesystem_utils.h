@@ -238,7 +238,7 @@ void PGM16save(const wchar_t* outname, int w, int h, int chan,const unsigned cha
 {
 	FILE* fi = _wfopen(outname, L"wb");
 #else // _WIN32
-void PGM16save(char* outname, int w, int h, int chan,const unsigned char* data)
+void PGM16save(const char* outname, int w, int h, int chan,const unsigned char* data)
 {
 	FILE* fi = fopen(outname, "wb");
 #endif // _WIN32
