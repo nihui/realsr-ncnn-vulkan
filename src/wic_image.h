@@ -3,12 +3,12 @@
 
 // image decoder and encoder with WIC
 #include <wincodec.h>
-
+/*
 extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 }
-/*
+
 void ffmpegreg()
 {
     av_register_all();
@@ -22,7 +22,7 @@ unsigned char* wic_decode_imageXXX(const wchar_t* filepath, int* w, int* h, int*
 
     AVFormatContext *pFormatCtx = avformat_alloc_context();
 
-    if(avformat_open_input(&pFormatCtx,"D:\\Program Files\\irfanview\\SR\\tibr_o.jpg",NULL,NULL)!=0){       //¥´¶}¦h´CÅé¤å¥ó
+    if(avformat_open_input(&pFormatCtx,"D:\\Program Files\\irfanview\\SR\\tibr_o.jpg",NULL,NULL)!=0){       //Â¥Â´Â¶}Â¦hÂ´CÃ…Ã©Â¤Ã¥Â¥Ã³
 		puts("Couldn't open input stream.\n");
 		return NULL;
 	}
