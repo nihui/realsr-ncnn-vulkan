@@ -28,7 +28,7 @@ const wchar_t* modeldirs[] = { NULL, L".\\models-DF2K_JPEG",L".\\models-DF2K", L
 wchar_t parampath[128];
 wchar_t modelpath[128];
 #else // _WIN32
-const char* modeldirs[] = { NULL, "./models-DF2K_JPEG","./models-DF2K", L"./models-ESRGAN" };
+const char* modeldirs[] = { NULL, "./models-DF2K_JPEG","./models-DF2K", "./models-ESRGAN" };
 char parampath[128];
 char modelpath[128];
 #endif // _WIN32
