@@ -1,5 +1,9 @@
 // realsr implemented with ncnn library
+#if _WIN32
 #define DLL_EXPORT extern "C" __declspec(dllexport)
+#else // _WIN32
+#define DLL_EXPORT  
+#endif // _WIN32
 
 #ifndef REALSR_H
 #define REALSR_H
