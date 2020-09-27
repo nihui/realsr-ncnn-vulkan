@@ -33,7 +33,7 @@ https://arxiv.org/abs/2005.01996
 ### Example Command
 
 ```shell
-realsr-ncnn-vulkan.exe -i input.jpg -o output.png -s 4
+realsr-ncnn-vulkan.exe -i input.jpg -o output.png -m a -s 4
 ```
 
 ### Full Usages
@@ -47,7 +47,7 @@ Usage: realsr-ncnn-vulkan -i infile -o outfile [options]...
   -o output-path       output image path (jpg/png/webp) or directory
   -s scale             upscale ratio (4, default=4)
   -t tile-size         tile size (>=32/0=auto, default=0) can be 0,0,0 for multi-gpu
-  -m model-path        realsr model path (default=models-DF2K_JPEG)
+  -m model-id        realsr model id (default load settings from ./spv/0modelset.rsr   //a='models-DF2K_JPEG', b='models-DF2K', c='models-ESRGAN')
   -g gpu-id            gpu device to use (default=0) can be 0,1,2 for multi-gpu
   -j load:proc:save    thread count for load/proc/save (default=1:2:2) can be 1:2,2,2:2 for multi-gpu
   -x                   enable tta mode
