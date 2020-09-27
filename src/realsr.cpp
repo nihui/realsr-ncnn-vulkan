@@ -47,15 +47,27 @@ inline int FillNetPack(ncnnNetPack& pack,int model,  int scale, int noise)
 	if (model == 3)
 	{
 		pack.scale = scale;
+		#if _WIN32
 		swprintf(parampath, 256, L"%s/x%d.param\0", modeldirs[model],scale);
+		#else
+		sprintf(parampath, "%s/x%d.param\0", modeldirs[model], scale);
+		#endif
 
 		if (noise == 0)
 		{
+			#if _WIN32
 			swprintf(modelpath, 256, L"%s/x%d.bin\0", modeldirs[model], scale);
+			#else
+			sprintf(modelpath, "%s/x%d.bin\0", modeldirs[model], scale);
+			#endif
 		}
 		else
 		{
+			#if _WIN32
 			swprintf(modelpath, 256, L"%s/x%d_%c.bin\0", modeldirs[model], scale,(wchar_t)(noise+0x60));
+			#else
+			sprintf(modelpath, "%s/x%d_%c.bin\0", modeldirs[model], scale,(char)(noise+0x60));
+			#endif
 			
 		}
 
