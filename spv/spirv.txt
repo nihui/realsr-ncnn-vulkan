@@ -1,1 +1,0 @@
-move them outside the executable
