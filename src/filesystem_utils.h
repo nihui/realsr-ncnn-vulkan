@@ -1,6 +1,13 @@
 #ifndef FILESYSTEM_UTILS_H
 #define FILESYSTEM_UTILS_H
 
+
+#if _WIN32
+#define DLL_EXPORT extern "C" __declspec(dllexport)
+#else // _WIN32
+#define DLL_EXPORT  
+#endif // _WIN32
+
 #include <stdio.h>
 #include <vector>
 #include <string>
@@ -82,7 +89,7 @@ inline WHpack multipwh(const WHpack src,const float scale,const int mdlskl)
 	return rrtt;
 }
 
-inline char FillScaleParam(ScaleParam* dst,float skale,const char* modelset)
+inline char FillScaleParam(ScaleParam* dst,const char* modelset)
 {
 
 	FILE* fi = fopen(modelset, "rb");

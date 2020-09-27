@@ -2,7 +2,7 @@
 
 
 
-const int downsamptype = 3;
+const int downsamptype = 2;
 extern bool i16out;
 
 
@@ -39,22 +39,44 @@ char modelpath[128];
 inline int FillNetPack(ncnnNetPack& pack,int model,  int scale, int noise)
 {
 	
-	pack.scale = 4;
+	
 	pack.noise = noise;
 	pack.prepadding =10;
 
 
+	if (model == 3)
+	{
+		pack.scale = scale;
+		swprintf(parampath, 256, L"%s/x%d.param\0", modeldirs[model],scale);
+
+		if (noise == 0)
+		{
+			swprintf(modelpath, 256, L"%s/x%d.bin\0", modeldirs[model], scale);
+		}
+		else
+		{
+			swprintf(modelpath, 256, L"%s/x%d_%c.bin\0", modeldirs[model], scale,(wchar_t)(noise+0x60));
+			
+		}
+
+	}
+	else
+	{
+		pack.scale = 4;
+#if _WIN32
+		swprintf(parampath, 256, L"%s/x4.param\0", modeldirs[model]);
+		swprintf(modelpath, 256, L"%s/x4.bin\0", modeldirs[model]);
+#else
+
+		sprintf(parampath, "%s/x4.param\0", modeldirs[model]);
+		sprintf(modelpath, "%s/x4.bin\0", modeldirs[model]);
+
+#endif
+	}
+
 
 	
-	    #if _WIN32
-	    swprintf(parampath, 256, L"%s/x4.param\0", modeldirs[model]);
-        swprintf(modelpath, 256, L"%s/x4.bin\0", modeldirs[model]);
-        #else
-
-        sprintf(parampath, "%s/x4.param\0", modeldirs[model]);
-        sprintf(modelpath, "%s/x4.bin\0", modeldirs[model]);
-
-        #endif
+	   
 
 
 	
@@ -87,8 +109,8 @@ inline int FillNetPack(ncnnNetPack& pack,int model,  int scale, int noise)
 		fclose(fp);
 	}
 #else
-    pack.net.load_param(parampath);
-    pack.net.load_model(modelpath);
+		pack.net.load_param(parampath);
+		pack.net.load_model(modelpath);
 #endif
 
 

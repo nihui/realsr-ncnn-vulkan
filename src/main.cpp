@@ -130,7 +130,7 @@ static void print_usage()
 	fprintf(stderr, "  -o output-path       output image path (jpg/png/webp) or directory\n");
 	fprintf(stderr, "  -s scale             upscale ratio (4, default=4)\n");
 	fprintf(stderr, "  -t tile-size         tile size (>=32/0=auto, default=0) can be 0,0,0 for multi-gpu\n");
-	fprintf(stderr, "  -m model-path        realsr model path (default=models-DF2K_JPEG)\n");
+	fprintf(stderr, "  -m model-id        realsr model id (default='a'\t='models-DF2K_JPEG')\n");
 	fprintf(stderr, "  -g gpu-id            gpu device to use (default=auto) can be 0,1,2 for multi-gpu\n");
 	fprintf(stderr, "  -j load:proc:save    thread count for load/proc/save (default=1:2:2) can be 1:2,2,2:2 for multi-gpu\n");
 	fprintf(stderr, "  -x                   enable tta mode\n");
@@ -656,6 +656,7 @@ void* save(void* args)
 
 std::vector<path_t> inout_files[2];
 
+
 #if _WIN32
 DLL_EXPORT void InOutList(const int count, wchar_t** in_paths, wchar_t** out_paths)
 #else
@@ -718,7 +719,7 @@ int main(int argc, char** argv)
 	path_t outputpath = PATHSTR(".\\output.png");;
 
 	std::vector<int> tilesize;
-	int model = 1;
+	int model = -1;
 	std::vector<int> gpuid;
 	int jobs_load = 1;
 	std::vector<int> jobs_proc;
@@ -726,7 +727,7 @@ int main(int argc, char** argv)
 	int verbose = 0;
 	int tta_mode = 0;
 	path_t format = PATHSTR("png");
-	int kscale = 7680;
+	int scale = 4;
 
 #if _WIN32
 	setlocale(LC_ALL, "");
@@ -741,13 +742,14 @@ int main(int argc, char** argv)
 		case L'o':
 			outputpath = optarg;
 			break;
-		case L'k':
-			kscale = _wtoi(optarg);
+		case L's':
+			scale = _wtoi(optarg);
+			break;
 		case L't':
 			tilesize = parse_optarg_int_array(optarg);
 			break;
 		case L'm':
-			model = (int)(optarg[0]) - 0x60;
+			model = (int)(optarg[0]);
 			break;
 		case L'g':
 			gpuid = parse_optarg_int_array(optarg);
@@ -783,11 +785,14 @@ int main(int argc, char** argv)
 		case 'o':
 			outputpath = optarg;
 			break;
+		case 's':
+			scale = atoi(optarg);
+			break;
 		case 't':
 			tilesize = parse_optarg_int_array(optarg);
 			break;
 		case 'm':
-			model = (int)(optarg[0]) - 0x60;
+			model = (int)(optarg[0]);
 			break;
 		case 'g':
 			gpuid = parse_optarg_int_array(optarg);
@@ -813,13 +818,26 @@ int main(int argc, char** argv)
 	}
 #endif // _WIN32
 
-#if _WIN32
-	const bool maxuse = (FillScaleParam(ScaleSteps, kscale, ".\\spv\\0modelset.rsr") > (char)0);
-#else
-	const bool maxuse = (FillScaleParam(ScaleSteps, kscale, "./spv/0modelset.rsr") > (char)0);
-#endif
+	char maxuse = 0;
+	if (model > 0)
+	{
+		ScaleSteps[0].DstSize = 0;
+		ScaleSteps[0].model = 0;
+		ScaleSteps[0].mdl = (char)model;
+		ScaleSteps[0].skl=(char)scale;
+		ScaleSteps[1].model = 0xFF;
+		stepinit_fixed = 1;
+	}
+	else
+	{
 
-	int scale = ScaleSteps[ScaleSteps[0].model].skl;
+#if _WIN32
+		maxuse = FillScaleParam(ScaleSteps, ".\\spv\\0modelset.rsr");
+#else
+		maxuse = FillScaleParam(ScaleSteps, "./spv/0modelset.rsr");
+#endif
+	}
+	scale = ScaleSteps[ScaleSteps[0].model].skl;
 
 
 
@@ -829,11 +847,7 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
-	if (scale != 4)
-	{
-		fprintf(stderr, "invalid scale argument\n");
-		return -1;
-	}
+	
 
 	if (tilesize.size() != (gpuid.empty() ? 1 : gpuid.size()) && !tilesize.empty())
 	{
@@ -988,7 +1002,7 @@ int main(int argc, char** argv)
 
 			if (maxuse)
 			{
-				puts("use more than 1");
+				puts("use more than 1\n");
 				for (int jjp = 1; jjp < 3; jjp++)
 				{
 					if (ScaleSteps[jjp].mdl != (char)0xFF)
