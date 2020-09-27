@@ -29,9 +29,10 @@ jobs:
     - name: deploy
       run: |
         mkdir realsr-ncnn-vulkan-artifact
+        mkdir realsr-ncnn-vulkan-artifact\spv
         Copy-Item -Verbose -Path "build\Release\realsr-ncnn-vulkan.exe" -Destination "realsr-ncnn-vulkan-artifact"
         Copy-Item -Verbose -Recurse -Path "models\*" -Destination "realsr-ncnn-vulkan-artifact"
-        Copy-Item -Verbose -Recurse -Path "spv\*" -Destination "realsr-ncnn-vulkan-artifact\spv"
+        Copy-Item -Verbose -Recurse -Path "spv\*" -Destination "realsr-ncnn-vulkan-artifact\spv\"
     - uses: actions/upload-artifact@v2
       with:
         name: realsr-ncnn-vulkan-artifact-windows-2016
@@ -65,9 +66,10 @@ jobs:
     - name: deploy
       run: |
         mkdir realsr-ncnn-vulkan-artifact
+        mkdir realsr-ncnn-vulkan-artifact\spv
         Copy-Item -Verbose -Path "build\Release\realsr-ncnn-vulkan.exe" -Destination "realsr-ncnn-vulkan-artifact"
         Copy-Item -Verbose -Recurse -Path "models\*" -Destination "realsr-ncnn-vulkan-artifact"
-        Copy-Item -Verbose -Recurse -Path "spv\*" -Destination "realsr-ncnn-vulkan-artifact\spv"
+        Copy-Item -Verbose -Recurse -Path "spv\*" -Destination "realsr-ncnn-vulkan-artifact\spv\"
     - uses: actions/upload-artifact@v2
       with:
         name: realsr-ncnn-vulkan-artifact-windows-2019
