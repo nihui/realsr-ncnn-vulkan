@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="rlsr" />
+		<Option pch_mode="2" />
+		<Option compiler="microsoft_visual_c_2019" />
+		<Build>
+			<Target title="RealSR">
+				<Option output="bin/Release/RealSR" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="microsoft_visual_c_2019" />
+				<Option use_console_runner="0" />
+			</Target>
+			<Target title="W2X">
+				<Option output="bin/Release/W2X" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="microsoft_visual_c_2019" />
+				<Option use_console_runner="0" />
+			</Target>
+			<Target title="W2XDLL">
+				<Option output="bin/Release/W2XLIB" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="3" />
+				<Option compiler="microsoft_visual_c_2019" />
+				<Compiler>
+					<Add option="/DBuildDLL" />
+				</Compiler>
+			</Target>
+			<Target title="RealSRDLL">
+				<Option output="bin/Release/RealSRLIB" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="3" />
+				<Option compiler="microsoft_visual_c_2019" />
+				<Compiler>
+					<Add option="/DBuildDLL" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="/D_MBCS" />
+			<Add option="/TP" />
+			<Add option="/GA" />
+			<Add option="/fp:precise" />
+			<Add option="/fp:except-" />
+			<Add option="/GS-" />
+			<Add option="/Ox" />
+			<Add option="/Os" />
+			<Add option="/W3" />
+			<Add option="/openmp" />
+			<Add option="/Zc:wchar_t" />
+			<Add option="/Zc:forScope" />
+			<Add option="/Zc:inline" />
+			<Add option="/Gm-" />
+			<Add option="/EHs-c-" />
+			<Add option="/DNOMINMAX" />
+			<Add option="/DNDEBUG" />
+			<Add directory="nc" />
+			<Add directory="webp" />
+		</Compiler>
+		<Linker>
+			<Add option="/DYNAMICBASE:NO" />
+			<Add option="/OPT:REF" />
+			<Add option="/OPT:ICF" />
+			<Add option="/DEBUG:FASTLINK" />
+			<Add option="/pdb:$(TARGET_OUTPUT_BASENAME).pdb" />
+			<Add library="kernel32" />
+			<Add library="ole32" />
+			<Add library="ucrt" />
+			<Add library="user32" />
+			<Add library="vcruntime" />
+			<Add library="advapi32" />
+			<Add library="oleaut32" />
+			<Add library="../ncnn.lib" />
+			<Add library="../vulkan-1.lib" />
+			<Add library="../gsl/webp.lib" />
+			<Add library="../gsl/glslang.lib" />
+			<Add library="../gsl/OGLCompiler.lib" />
+			<Add library="../gsl/OSDependent.lib" />
+			<Add library="../gsl/SPIRV.lib" />
+			<Add library="../gsl/avutil.lib" />
+			<Add library="../gsl/avformat.lib" />
+			<Add library="../gsl/avdevice.lib" />
+			<Add library="../gsl/avcodec.lib" />
+			<Add library="../gsl/swscale.lib" />
+			<Add library="../gsl/swresample.lib" />
+		</Linker>
+		<Unit filename="realsr.cpp">
+			<Option target="RealSR" />
+			<Option target="RealSRDLL" />
+		</Unit>
+		<Unit filename="realsr.h" />
+		<Unit filename="realsrmain.cpp">
+			<Option target="RealSR" />
+			<Option target="RealSRDLL" />
+		</Unit>
+		<Unit filename="simptool.h" />
+		<Unit filename="w2xmain.cpp">
+			<Option target="W2X" />
+			<Option target="W2XDLL" />
+		</Unit>
+		<Unit filename="waifu2x.cpp">
+			<Option target="W2X" />
+			<Option target="W2XDLL" />
+		</Unit>
+		<Unit filename="waifu2x.h" />
+		<Unit filename="wic_image.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

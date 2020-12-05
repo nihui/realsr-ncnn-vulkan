@@ -1,0 +1,2 @@
+realsr_postproc(Zg).comp = RSRZ0g
+realsr_postproc+first(B) = RSRB0s

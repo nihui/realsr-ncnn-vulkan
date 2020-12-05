@@ -29,8 +29,10 @@ jobs:
     - name: deploy
       run: |
         mkdir realsr-ncnn-vulkan-artifact
+        mkdir realsr-ncnn-vulkan-artifact\spv
         Copy-Item -Verbose -Path "build\Release\realsr-ncnn-vulkan.exe" -Destination "realsr-ncnn-vulkan-artifact"
         Copy-Item -Verbose -Recurse -Path "models\*" -Destination "realsr-ncnn-vulkan-artifact"
+        Copy-Item -Verbose -Recurse -Path "spv\*" -Destination "realsr-ncnn-vulkan-artifact\spv\"
     - uses: actions/upload-artifact@v2
       with:
         name: realsr-ncnn-vulkan-artifact-windows-2016
@@ -64,8 +66,10 @@ jobs:
     - name: deploy
       run: |
         mkdir realsr-ncnn-vulkan-artifact
+        mkdir realsr-ncnn-vulkan-artifact\spv
         Copy-Item -Verbose -Path "build\Release\realsr-ncnn-vulkan.exe" -Destination "realsr-ncnn-vulkan-artifact"
         Copy-Item -Verbose -Recurse -Path "models\*" -Destination "realsr-ncnn-vulkan-artifact"
+        Copy-Item -Verbose -Recurse -Path "spv\*" -Destination "realsr-ncnn-vulkan-artifact\spv\"
     - uses: actions/upload-artifact@v2
       with:
         name: realsr-ncnn-vulkan-artifact-windows-2019
@@ -97,9 +101,11 @@ jobs:
     - name: deploy
       run: |
         mkdir realsr-ncnn-vulkan-artifact
+        mkdir realsr-ncnn-vulkan-artifact/spv
         strip build/realsr-ncnn-vulkan
         cp -v build/realsr-ncnn-vulkan realsr-ncnn-vulkan-artifact
         cp -v -r models/* realsr-ncnn-vulkan-artifact
+        cp -v -r spv/* realsr-ncnn-vulkan-artifact/spv
     - uses: actions/upload-artifact@v2
       with:
         name: realsr-ncnn-vulkan-artifact-ubuntu-16.04
@@ -131,9 +137,11 @@ jobs:
     - name: deploy
       run: |
         mkdir realsr-ncnn-vulkan-artifact
+        mkdir realsr-ncnn-vulkan-artifact/spv
         strip build/realsr-ncnn-vulkan
         cp -v build/realsr-ncnn-vulkan realsr-ncnn-vulkan-artifact
         cp -v -r models/* realsr-ncnn-vulkan-artifact
+        cp -v -r spv/* realsr-ncnn-vulkan-artifact/spv
     - uses: actions/upload-artifact@v2
       with:
         name: realsr-ncnn-vulkan-artifact-ubuntu-18.04
@@ -165,9 +173,11 @@ jobs:
     - name: deploy
       run: |
         mkdir realsr-ncnn-vulkan-artifact
+        mkdir realsr-ncnn-vulkan-artifact/spv
         strip build/realsr-ncnn-vulkan
         cp -v build/realsr-ncnn-vulkan realsr-ncnn-vulkan-artifact
         cp -v -r models/* realsr-ncnn-vulkan-artifact
+        cp -v -r spv/* realsr-ncnn-vulkan-artifact/spv
     - uses: actions/upload-artifact@v2
       with:
         name: realsr-ncnn-vulkan-artifact-ubuntu-20.04
@@ -199,9 +209,11 @@ jobs:
     - name: deploy
       run: |
         mkdir realsr-ncnn-vulkan-artifact
+        mkdir realsr-ncnn-vulkan-artifact/spv
         strip build/realsr-ncnn-vulkan
         cp -v build/realsr-ncnn-vulkan realsr-ncnn-vulkan-artifact
         cp -v -r models/* realsr-ncnn-vulkan-artifact
+        cp -v -r spv/* realsr-ncnn-vulkan-artifact/spv
     - uses: actions/upload-artifact@v2
       with:
         name: realsr-ncnn-vulkan-artifact-macos-10.15
