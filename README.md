@@ -1,6 +1,7 @@
 # RealSR ncnn Vulkan
 
 ![CI](https://github.com/nihui/realsr-ncnn-vulkan/workflows/CI/badge.svg)
+![download](https://img.shields.io/github/downloads/nihui/realsr-ncnn-vulkan/total.svg)
 
 ncnn implementation of Real-World Super-Resolution via Kernel Estimation and Noise Injection super resolution.
 
