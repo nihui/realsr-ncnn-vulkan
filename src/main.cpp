@@ -719,23 +719,18 @@ int main(int argc, char** argv)
     jobs_load = std::min(jobs_load, cpu_count);
     jobs_save = std::min(jobs_save, cpu_count);
 
-    int gpu_count = ncnn::get_gpu_count();
-    for (int i=0; i<use_gpu_count; i++)
-    {
-        if (gpuid[i] < 0 || gpuid[i] >= gpu_count)
-        {
-            fprintf(stderr, "invalid gpu device\n");
-
-            ncnn::destroy_gpu_instance();
-            return -1;
-        }
-    }
-
     int total_jobs_proc = 0;
     for (int i=0; i<use_gpu_count; i++)
     {
-        int gpu_queue_count = ncnn::get_gpu_info(gpuid[i]).compute_queue_count();
-        jobs_proc[i] = std::min(jobs_proc[i], gpu_queue_count);
+        if (gpuid[i] != -1)
+        {
+            int gpu_queue_count = ncnn::get_gpu_info(gpuid[i]).compute_queue_count();
+            jobs_proc[i] = std::min(jobs_proc[i], gpu_queue_count);
+        }
+        else
+        {
+            jobs_proc[i] = std::min(jobs_proc[i], cpu_count);
+        }
         total_jobs_proc += jobs_proc[i];
     }
 
@@ -743,21 +738,27 @@ int main(int argc, char** argv)
     {
         if (tilesize[i] != 0)
             continue;
-
-        uint32_t heap_budget = ncnn::get_gpu_device(gpuid[i])->get_heap_budget();
-
-        // more fine-grained tilesize policy here
-        if (model.find(PATHSTR("models-DF2K")) != path_t::npos
-            || model.find(PATHSTR("models-DF2K_JPEG")) != path_t::npos)
+        if (gpuid[i] != -1)
         {
-            if (heap_budget > 1900)
-                tilesize[i] = 200;
-            else if (heap_budget > 550)
-                tilesize[i] = 100;
-            else if (heap_budget > 190)
-                tilesize[i] = 64;
-            else
-                tilesize[i] = 32;
+            uint32_t heap_budget = ncnn::get_gpu_device(gpuid[i])->get_heap_budget();
+
+            // more fine-grained tilesize policy here
+            if (model.find(PATHSTR("models-DF2K")) != path_t::npos
+                || model.find(PATHSTR("models-DF2K_JPEG")) != path_t::npos)
+            {
+                if (heap_budget > 1900)
+                    tilesize[i] = 200;
+                else if (heap_budget > 550)
+                    tilesize[i] = 100;
+                else if (heap_budget > 190)
+                    tilesize[i] = 64;
+                else
+                    tilesize[i] = 32;
+            }
+        }
+        else
+        {
+            tilesize[i] = 4000;
         }
     }
 
@@ -766,7 +767,8 @@ int main(int argc, char** argv)
 
         for (int i=0; i<use_gpu_count; i++)
         {
-            realsr[i] = new RealSR(gpuid[i], tta_mode);
+            int num_threads = gpuid[i] == -1 ? jobs_proc[i] : 1;
+            realsr[i] = new RealSR(gpuid[i], tta_mode, num_threads);
 
             realsr[i]->load(paramfullpath, modelfullpath);
 
