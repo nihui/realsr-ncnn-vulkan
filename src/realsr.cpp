@@ -829,6 +829,14 @@ int RealSR::process_cpu(const ncnn::Mat &inimage, ncnn::Mat &outimage) const
                     pad_left = prepadding;
                     pad_right = prepadding;
                 }
+                if (yi == ytiles - 1)
+                {
+                    pad_bottom = 0;
+                }
+                if (xi == xtiles - 1)
+                {
+                    pad_right = 0;
+                }
 
 
 //                ncnn::Mat in_tile_padded;
