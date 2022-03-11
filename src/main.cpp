@@ -108,7 +108,7 @@ static void print_usage()
     fprintf(stderr, "  -s scale             upscale ratio (4, default=4)\n");
     fprintf(stderr, "  -t tile-size         tile size (>=32/0=auto, default=0) can be 0,0,0 for multi-gpu\n");
     fprintf(stderr, "  -m model-path        realsr model path (default=models-DF2K_JPEG)\n");
-    fprintf(stderr, "  -g gpu-id            gpu device to use (default=auto) can be 0,1,2 for multi-gpu\n");
+    fprintf(stderr, "  -g gpu-id            gpu device to use (-1=cpu, default=auto) can be 0,1,2 for multi-gpu\n");
     fprintf(stderr, "  -j load:proc:save    thread count for load/proc/save (default=1:2:2) can be 1:2,2,2:2 for multi-gpu\n");
     fprintf(stderr, "  -x                   enable tta mode\n");
     fprintf(stderr, "  -f format            output image format (jpg/png/webp, default=ext/png)\n");
@@ -722,7 +722,7 @@ int main(int argc, char** argv)
     int gpu_count = ncnn::get_gpu_count();
     for (int i=0; i<use_gpu_count; i++)
     {
-        if (gpuid[i] < 0 || gpuid[i] >= gpu_count)
+        if (gpuid[i] < -1 || gpuid[i] >= gpu_count)
         {
             fprintf(stderr, "invalid gpu device\n");
 
@@ -734,15 +734,28 @@ int main(int argc, char** argv)
     int total_jobs_proc = 0;
     for (int i=0; i<use_gpu_count; i++)
     {
-        int gpu_queue_count = ncnn::get_gpu_info(gpuid[i]).compute_queue_count();
-        jobs_proc[i] = std::min(jobs_proc[i], gpu_queue_count);
-        total_jobs_proc += jobs_proc[i];
+        if (gpuid[i] == -1)
+        {
+            jobs_proc[i] = std::min(jobs_proc[i], cpu_count);
+            total_jobs_proc += 1;
+        }
+        else
+        {
+            total_jobs_proc += jobs_proc[i];
+        }
     }
 
     for (int i=0; i<use_gpu_count; i++)
     {
         if (tilesize[i] != 0)
             continue;
+
+        if (gpuid[i] == -1)
+        {
+            // cpu only
+            tilesize[i] = 200;
+            continue;
+        }
 
         uint32_t heap_budget = ncnn::get_gpu_device(gpuid[i])->get_heap_budget();
 
@@ -766,7 +779,9 @@ int main(int argc, char** argv)
 
         for (int i=0; i<use_gpu_count; i++)
         {
-            realsr[i] = new RealSR(gpuid[i], tta_mode);
+            int num_threads = gpuid[i] == -1 ? jobs_proc[i] : 1;
+
+            realsr[i] = new RealSR(gpuid[i], tta_mode, num_threads);
 
             realsr[i]->load(paramfullpath, modelfullpath);
 
@@ -798,9 +813,16 @@ int main(int argc, char** argv)
                 int total_jobs_proc_id = 0;
                 for (int i=0; i<use_gpu_count; i++)
                 {
-                    for (int j=0; j<jobs_proc[i]; j++)
+                    if (gpuid[i] == -1)
                     {
                         proc_threads[total_jobs_proc_id++] = new ncnn::Thread(proc, (void*)&ptp[i]);
+                    }
+                    else
+                    {
+                        for (int j=0; j<jobs_proc[i]; j++)
+                        {
+                            proc_threads[total_jobs_proc_id++] = new ncnn::Thread(proc, (void*)&ptp[i]);
+                        }
                     }
                 }
             }
