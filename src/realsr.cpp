@@ -10,7 +10,7 @@
 #include "realsr_preproc_tta.comp.hex.h"
 #include "realsr_postproc_tta.comp.hex.h"
 
-RealSR::RealSR(int gpuid, bool _tta_mode, int num_threads)
+RealSR::RealSR(int gpuid, bool _tta_mode, int num_threads, bool _quiet)
 {
     vkdev = gpuid == -1 ? 0 : ncnn::get_gpu_device(gpuid);
 
@@ -20,6 +20,7 @@ RealSR::RealSR(int gpuid, bool _tta_mode, int num_threads)
     realsr_postproc = 0;
     bicubic_4x = 0;
     tta_mode = _tta_mode;
+    quiet = _quiet;
 }
 
 RealSR::~RealSR()
@@ -478,7 +479,9 @@ int RealSR::process(const ncnn::Mat& inimage, ncnn::Mat& outimage) const
                 cmd.reset();
             }
 
-            fprintf(stderr, "%.2f%%\n", (float)(yi * xtiles + xi) / (ytiles * xtiles) * 100);
+            if (!quiet){
+                fprintf(stderr, "%.2f%%\n", (float)(yi * xtiles + xi) / (ytiles * xtiles) * 100);
+            }
         }
 
         // download
