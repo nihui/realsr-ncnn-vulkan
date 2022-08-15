@@ -13,7 +13,7 @@
 class RealSR
 {
 public:
-    RealSR(int gpuid, bool tta_mode = false, int num_threads = 1);
+    RealSR(int gpuid, bool tta_mode = false, int num_threads = 1, bool quiet = false);
     ~RealSR();
 
 #if _WIN32
@@ -39,6 +39,7 @@ private:
     ncnn::Pipeline* realsr_postproc;
     ncnn::Layer* bicubic_4x;
     bool tta_mode;
+    bool quiet;
 };
 
 #endif // REALSR_H
